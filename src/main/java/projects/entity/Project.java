@@ -7,8 +7,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-public class projects {
-	private Integer projectID;
+public class Project {
+	private Integer projectId;
 	private String projectName;
 	private String notes;
 	private Integer difficulty;
@@ -27,7 +27,7 @@ public class projects {
 	String createTime = Objects.nonNull(createdAt)? fmt.format(createdAt) : "(null)";
 	String project =" ";
 	
-	project += "\n     ID=" + projectID;
+	project += "\n     Id=" + projectId;
 	project += "\n     projectName=" + projectName;
 	project += "\n     notes=" + notes;
 	project += "\n     difficulty=" + difficulty;
@@ -38,14 +38,14 @@ public class projects {
 	project += " \n Materials:";
 	
 	for( material  Materials : materials) {
-		project += "\n  "+ Materials;
+		project += 	"\n  "+ Materials;
 	}
-	project += " \n Steps:";
+	project += 	"\n Steps:";
 	
 	for( Step  step : steps) {
-		project += "\n  "+ step;
+		project +=		"\n  "+ step;
 	}
-project += " \n categories:";
+project += "\n categories:";
 	
 	for( Category  category : categories) {
 		project += "\n  "+ category;
@@ -53,11 +53,11 @@ project += " \n categories:";
 	return project;
 	
 	}
-	public Integer getProjectID() {
-		return projectID;
+	public Integer getProjectId() {
+		return this.projectId;
 	}
-	public void setProjectID(Integer projectID) {
-		this.projectID = projectID;
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 	public String getProjectName() {
 		return projectName;
@@ -104,6 +104,16 @@ project += " \n categories:";
 	public List<Category> getCategories() {
 		return categories;
 	}
+	public static void add(Project extract) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+		
+	}
+	
+		
+	
 	
 
-}
+

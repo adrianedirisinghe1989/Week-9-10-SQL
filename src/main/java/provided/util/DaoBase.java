@@ -17,6 +17,11 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
 
+import projects.entity.Category;
+import projects.entity.Step;
+import projects.entity.Project;
+
+import java.math.BigDecimal;
 /**
  * This class contains utility methods for the DAO class.
  * 
@@ -97,6 +102,10 @@ public abstract class DaoBase {
         case Types.VARCHAR:
           stmt.setString(parameterIndex, (String) value);
           break;
+          
+        case Types.DECIMAL:
+            stmt.setBigDecimal(parameterIndex, (BigDecimal) value);
+            break;
 
         default:
           throw new DaoException("Unknown parameter type: " + classType);
@@ -122,7 +131,10 @@ public abstract class DaoBase {
     if (Double.class.equals(classType)) {
       return Types.DOUBLE;
     }
-
+    
+    if (BigDecimal.class.equals(classType)) {
+        return Types.DECIMAL;
+    }
     if (LocalTime.class.equals(classType)) {
       return Types.OTHER;
     }
@@ -234,7 +246,7 @@ public abstract class DaoBase {
    * @param classType The actual class type of the object to create.
    * @return A populated class.
    */
-  protected <T> T extract(ResultSet rs, Class<T> classType) {
+  protected static <T> T extract(ResultSet rs, Class<T> classType) {
     try {
       /* Obtain the constructor and create an object of the correct type. */
       Constructor<T> con = classType.getConstructor();
@@ -297,7 +309,7 @@ public abstract class DaoBase {
    * @param identifier The name in camel case to convert.
    * @return The name converted to snake case.
    */
-  private String camelCaseToSnakeCase(String identifier) {
+  private static String camelCaseToSnakeCase(String identifier) {
     StringBuilder nameBuilder = new StringBuilder();
 
     for (char ch : identifier.toCharArray()) {

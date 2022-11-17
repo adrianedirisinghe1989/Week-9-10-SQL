@@ -5,8 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Scanner;
-
-import projects.entity.projects;
+import projects.entity.Project;
 import projects.exception.DbException;
 import projects.service.ProjectService;
 
@@ -14,11 +13,14 @@ import projects.service.ProjectService;
 public class ProjectsApp {
 	private Scanner scanner = new Scanner(System.in);
 	private ProjectService projectService = new ProjectService();
+	private Project curProject;
 	
 	//@formatter:off
 	private List<String> operations = List.of(
-			"1) Create and populate all tables",
-			"2) Add a project"
+			"1) Add a project",
+			"2) Create and populate all tables" ,                          
+			"3) Select Projects",
+			"4) Select working project"
 		);	
 		//@formatter:on
 	public static void main(String[] args) {
@@ -38,15 +40,20 @@ public class ProjectsApp {
 				break;
 				
 			case 1:
-				createProjects();
+				addProject();                                       
 				break;
 				
 			case 2:
-				addProject();
+				createProjects();
 				break;
-				
+			case 3: 
+				selectProjects();
+				break;
+			case 4:
+				setCurrentProject();
+				break;
 				default:
-					System.out.println("\n"+ selection + "is not vaild. Try again.");
+					System.out.println("\n"+ selection + " " + "is not vaild. Try again.");
 					break;
 			}
 			
@@ -55,13 +62,45 @@ public class ProjectsApp {
 		}
 		}
 	}
-
-	private void createProjects() {
-		projectService.createAndPoupulateTables();
-		System.out.println("\nTables created and pouplated!");
+	private void setCurrentProject() {
+		 selectProjects();
+		
+		Integer projectId= getIntInput(" Select a project ID");
+		
+		curProject = null;
+		
+//		for(projects project: projects) {
+//			if(project.getProjectID().equals(projectId)) {
+		curProject = projectService.fetchProjectById(projectId);
+//				break;
+//			}
+//		}
+//		if(Objects.isNull(curProject)) {
+//			System.out.println("\nInvalid project selected. ");
+//		}
+//		
 		
 	}
+	
 
+
+//	private void  selectProjects() {
+//		List<projects> Project = projectService.fetchProjects();
+//		System.out.println("\nProjects:");	
+//		projects.forEach(projects-> System.out
+//				.println("  " + projects.getProjectId()+ ":"+ projects.getProjectName()));
+//	
+//	}
+
+	
+	
+	private void selectProjects() {
+		List<Project> projects = projectService.fetchProjects();
+		System.out.println("\nProjects: ");
+		projects.forEach(project-> System.out.println("    " + project.getProjectId()
+				+ ": "+ project.getProjectName()));
+		
+	}
 	private void addProject() {
 	String projectName = getStringInput(" Enter the project name");
 	BigDecimal estimatedHours = getDecimalInput( "Enter the estimated hours");
@@ -72,7 +111,7 @@ public class ProjectsApp {
 //	BigDecimal estimatedTime = getDecimalInput(estimatedHours);
 //	BigDecimal actualTime = getDecimalInput(actualHours);
 	
-	projects project = new projects();
+	Project project = new Project();
 	
 	project.setProjectName(projectName);
 	project.setEstimatedHours(estimatedHours);
@@ -80,8 +119,10 @@ public class ProjectsApp {
 	project.setDifficulty(difficulty);
 	project.setNotes(notes);
 	
-	projects dbProject = projectService.addProject(project);
+	Project dbProject = projectService.addProject(project);
 	System.out.println("You have successfully created project:\n"+ dbProject);
+	
+	curProject = projectService.fetchProjectById(dbProject.getProjectId());
 	
 	}
 
@@ -115,13 +156,33 @@ public class ProjectsApp {
 		return Objects.isNull(input)? -1 :input;	
 	}
 
-private void printOperations() {
-	System.out.println();
-	System.out.println("Here's what you can do:");
-	operations.forEach(line -> System.out.println("  "+ line));
-
+	
+	private void printOperations() {
+		System.out.println("\nThese are the available selections. Press the Enter Key to quit:");
 		
+		operations.forEach(line -> System.out.println(" "+ line));
+		
+		if(Objects.isNull(curProject)) {
+			System.out.println("\nYou are not working with a project.");
+		}
+		else {
+			System.out.println("\nYou are working with project:" + curProject);
+		}
 	}
+//private void printOperations() {
+//	System.out.println();
+//	System.out.println("Here's what you can do:");
+//	operations.forEach(line -> System.out.println("  "+ line));
+//
+//		
+//	}
+
+
+private void createProjects() {
+	projectService.createAndPoupulateTables();
+	System.out.println("\nTables created and pouplated!");
+	
+}
 	private Integer getIntInput(String prompt) {
 		String input = getStringInput(prompt);
 		

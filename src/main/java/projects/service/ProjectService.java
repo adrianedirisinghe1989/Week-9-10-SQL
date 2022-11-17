@@ -1,12 +1,7 @@
 package projects.service;
 
-
-
-
-
-import projects.dao.projectDao;
-import projects.entity.projects;
-
+import projects.dao.ProjectDao;
+import projects.entity.Project;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
@@ -14,17 +9,34 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import projects.exception.DbException;
 
 
-public class ProjectService {
+public  class ProjectService  {
 	private static final String SCHEMA_FILE ="projects-schema.sql";
 	
-private  projectDao ProjectDao = new projectDao();
+private  ProjectDao ProjectDao = new ProjectDao();
+
+public List<Project>fetchProjects(){
+	return ProjectDao.fetchAllProjects();
+}
+
+public Project fetchProjectById(Integer projectId) {
+	return ProjectDao.fetchProjectById(projectId).orElseThrow(()-> 
+	new NoSuchElementException("Project with Id = " + projectId + " does not exist."));
+}
 
 
-public projects addProject(projects project) {
-return projectDao.insertProject(project);
+//public projects fetchProjectById(Integer projectId) {
+//	return projectDao.fetchProjectById(projectId).orElseThrow(()-> new 
+//	NoSuchElementException("Project with project ID=" + projectId + "does not exist."));
+//		
+//}
+
+
+public Project addProject(Project project) {
+return ProjectDao.insertProject(project);
 }
 
 public void createAndPoupulateTables() {
@@ -102,12 +114,6 @@ private String readFileContent(String fileName) {
 	} catch (Exception e) {
 		throw new DbException(e);
 	}	
-	
-}
-public static void main(String[] args) {
-	new ProjectService().createAndPoupulateTables();
-
-
 }
 }
 
